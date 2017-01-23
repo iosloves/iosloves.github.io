@@ -15,12 +15,11 @@
 	}
 	li{
 		margin:5px;
-		background-color:#CCC;
 		float: left;
 	}
 	img{
-		width: 700px;
-		height: 50px;
+		width: 80%;
+		height: 80%;
 	}
 
 </style>
