@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爬取boss直聘“数据分析”工作3</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2><a id="boss_0"></a>爬取boss直聘“数据分析”【整理数据集】</h2>
+<h4><a id="1boss_1"></a>1、拿到boss的数据后，首先应该进行清洗数据</h4>
+<h5><a id="11__2"></a>1.1 清洗数据，需要去除多余重复值</h5>
+<p><strong>powerBI的去重distinct方法，获得我们去重后的表</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/ec8a44ed88f840259825f2fdf59485b5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="去重后的表"></p>
+<h5><a id="12__7"></a>1.2 清洗数据，拆分字段</h5>
+<h5><a id="121__8"></a>1.2.1 清洗数据：拆分学历、工作经验、行业范畴，人数规模，和最高最低工资</h5>
+<p><strong>主要在powerbi的query中执行</strong>替换，分列，模糊匹配<strong>等方法进行数据清洗整合</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/d9c3ed9407d44a7586b86b1ae480a1fe.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_12,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="后面三个"><br>
+<img src="https://img-blog.csdnimg.cn/0bb25133fdf445728debfdbc9afe6bf8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_13,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="薪资"></p>
+<h5><a id="122__14"></a>1.2.2 清洗数据：拆分技能页</h5>
+<p><strong>主要利用了powerBi的透视功能，将页面的行转成列</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/7269b0c1ad8f4cffa5efcc3c037cc8a8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_16,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="技能页"></p>
+<h5><a id="123__19"></a>1.2.3 清洗数据：补全数据，一些少部分的空值需要补全，防止错漏</h5>
+<p>补全的方法在于找个<strong>关键的信息</strong>，结合上下文判断该企业的数据是否真的丢失还是异常，丢失的就补全，异常值就修正，<br>
+<strong>如boss上的薪资范围一般格式是：10-12k，有些公司给出的薪资是以天计算：如200-250元/天，如果以传统的拆分来很容易出现200 到 250 的超大数值，这个时候应该查看是否错漏。</strong></p>
+<h5><a id="13__23"></a>1.3 清洗数据：后记</h5>
+<p><strong>1</strong>、本质上出现难以拆解的数据可能性不大，但是需要细心，<br>
+<strong>2</strong>、特别是重复值以及powerBI的联表操作，需要额外注意<br>
+<strong>3</strong>、*学会power query是非常重要的，这让我逐渐明白powerbi的强大</p>
+</div>
+</body>
+
+</html>
