@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爬取boss直聘“数据分析”工作2</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2><a id="boss2_0"></a>爬取boss直聘数据分析【2、插入数据】</h2>
+<p><strong>1、整合数据</strong><br>
+A：刚刚爬取的，只有第一页，所以接下来需要遍历多页面，直到内容数据收集完整<br>
+B:  在于用将多个参数包装后，放入列表,之后按顺序导入数据</p>
+<p>1.1新建列表</p>
+<p><img src="https://img-blog.csdnimg.cn/2bce4e936b1e4d13b26adefdde20a393.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_11,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<p>1.2 更新原有代码，将数据加入列表<br>
+【这里忘了把工作年限和学历分开，暂时放在一起，之后再数据清理】</p>
+<p><img src="https://img-blog.csdnimg.cn/1c7f8c33c58f40e19fb34feabd64f5cd.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_9,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>
+<img src="https://img-blog.csdnimg.cn/a3fe456ee6024433ad70b5d8aef998a4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_10,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>
+<img src="https://img-blog.csdnimg.cn/c62bdf95d6fb4242aa2eada5ed0e7230.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_11,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<p>1.3此处记得判空，因为boss有些公司不会给出福利和技能要求</p>
+<p><img src="https://img-blog.csdnimg.cn/7867f60ce8364edb973c11d9d3e28384.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_9,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<p>1.4 最后，查看录入的 数据指标是否正常，判断数据是否全部录入，通过len查看各个列表的长度即可</p>
+<p><img src="https://img-blog.csdnimg.cn/25b32011d718419f82b6420ed9a66c81.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6bijX-WbnummluWQkeadpeiQp-eRn-WkhO-8jOS5n-aXoOmjjumbqOS5n-aXoOaDhQ==,size_5,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<p>1.5 OK， 查看效果<br>
+<img src="https://img-blog.csdnimg.cn/dd46fda1a12944abade3b053bdaf806d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAcXFfMzQ3NjQyMDY=,size_19,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="通过len查看各个列表的长度"><br>
+<strong>2、进入分页操作</strong></p>
+<p>分页操作，无非就是把www.zhipin.com/c101280100-p100199/?query=数据分析&amp;page=2&amp;ka=page-2这个网址的page参数修改，查看了一下他的总页面为10，我个人估计不止，但是只显示前10页面的岗位。那我们就爬取到前10页的内容下来</p>
+<p>2.1 我先整合之前的代码：把数据抓取功能封装起来，放在getMessage方法中</p>
+<pre><code class="prism language-csharp"><span class="token return-type class-name">def</span> <span class="token function">getMessage</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	response <span class="token operator">=</span> requests<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span>headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+
+	<span class="token preprocessor property">#查看响应状态码</span>
+	status_code <span class="token operator">=</span> response<span class="token punctuation">.</span>status_code
+
+	<span class="token preprocessor property">#使用BeautifulSoup解析代码,并锁定页码指定标签内容</span>
+	content <span class="token operator">=</span> bs4<span class="token punctuation">.</span><span class="token function">BeautifulSoup</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>content<span class="token punctuation">.</span><span class="token function">decode</span><span class="token punctuation">(</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"lxml"</span><span class="token punctuation">)</span>
+	element <span class="token operator">=</span> content<span class="token punctuation">.</span><span class="token function">find_all</span><span class="token punctuation">(</span>class_<span class="token operator">=</span><span class="token string">"job-primary"</span><span class="token punctuation">)</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>status_code<span class="token punctuation">)</span>
+	<span class="token preprocessor property"># print(element)</span>
+
+</code></pre>
+<p>2.2 实现如下图的效果，大致排版如下：用sublimeText的缩进了一下![<strong>41-130</strong>行，我缩略了一下]<br>
+<img src="https://img-blog.csdnimg.cn/e333044f99fd4b7bbb3b9228f3a4137d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAcXFfMzQ3NjQyMDY=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="41-130行，我缩略了一下"><br>
+2.3 分页操作</p>
+<pre><code class="prism language-csharp"><span class="token keyword">for</span> x <span class="token keyword">in</span> <span class="token function">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token preprocessor property">#被boss查询到多次爬取，怕会被封ip，现在再去弄prexy代理，而且不一定管用，那就算了，直接睡眠2-3秒内爬取</span>
+	url <span class="token operator">=</span> <span class="token string">"https://www.zhipin.com/c101280100/?query=%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%B8%88&amp;page="</span><span class="token operator">+</span><span class="token function">str</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token operator">+</span><span class="token string">"&amp;ka=page-"</span><span class="token operator">+</span><span class="token function">str</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token operator">+</span><span class="token string">""</span><span class="token punctuation">;</span>
+	<span class="token function">getMessage</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+	time<span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span>
+</code></pre>
+<p>2.4 数据库操作</p>
+<pre><code class="prism language-csharp">import pymysql<span class="token punctuation">.</span>cursors
+<span class="token preprocessor property"># 连接数据库</span>
+connect <span class="token operator">=</span> pymysql<span class="token punctuation">.</span><span class="token function">Connect</span><span class="token punctuation">(</span>
+    host<span class="token operator">=</span>'localhost'<span class="token punctuation">,</span>
+    port<span class="token operator">=</span><span class="token number">3306</span><span class="token punctuation">,</span>
+    user<span class="token operator">=</span>'root'<span class="token punctuation">,</span>
+    passwd<span class="token operator">=</span>'root'<span class="token punctuation">,</span>
+    db<span class="token operator">=</span>'bossDatabase'<span class="token punctuation">,</span>
+    charset<span class="token operator">=</span>'utf8'
+<span class="token punctuation">)</span>
+<span class="token preprocessor property"># 获取游标</span>
+cursor <span class="token operator">=</span> connect<span class="token punctuation">.</span><span class="token function">cursor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token preprocessor property"># 插入数据</span>
+sql <span class="token operator">=</span> <span class="token string">"INSERT INTO company(jobName, company, companyType，companySize,companyPopulation,info_append,salary,place,jobTime,tag) VALUES ( '%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s' )"</span>
+time <span class="token operator">=</span><span class="token number">0</span>
+<span class="token keyword">while</span> time<span class="token operator">&lt;</span><span class="token function">len</span><span class="token punctuation">(</span>jobNameArr<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	data <span class="token operator">=</span> <span class="token punctuation">(</span>jobNameArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>companyArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>companyTypeArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>companySizeArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>companyPopulationArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>info_appendArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>salaryArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>placeArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>jobTimeArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">,</span>tagArr<span class="token punctuation">[</span>time<span class="token punctuation">]</span><span class="token punctuation">)</span>
+	cursor<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span>sql <span class="token operator">%</span> data<span class="token punctuation">)</span>
+	connect<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	print<span class="token class-name"><span class="token punctuation">(</span>'成功插入'<span class="token punctuation">,</span> cursor<span class="token punctuation">.</span>rowcount<span class="token punctuation">,</span> '条数据'<span class="token punctuation">)</span></span>
+	time <span class="token operator">=</span> time<span class="token operator">+</span><span class="token number">1</span>
+</code></pre>
+<p>2.5  结论</p>
+<blockquote>
+<p><strong>同爬取的流程来看：</strong> 		<br>
+A:获取页面， 		<br>
+B:正则表达式筛选字段，<br>
+C: 保存数据集合		<br>
+D:循环依次插入数据库</p>
+</blockquote>
+<p>2.6 杂谈：</p>
+<pre><code>A:循环10个页面测试了一下，
+B:爬取之后发现如下：
+       1、boss的反爬取机制有cookie限制查询次数，查询超过五次左右，将会更新cookie，停止网页的爬取，
+       2、boss反爬取第二个机制：更新cookie的同时，会延时加载js，导致页面出现只有js的情况
+     【这是在我更改header之类能够重新访问后发现的，需要弄一个**随机header来访问数据**才行】
+     解决策略如下：
+     1、及时更新cookie，在同一cookie的情况下不频繁爬取
+     2、利用selenium来实现模拟用户操作浏览器，防止js预加载出现下图页面
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/e8bde67e630e46aab8f346b88512ac6e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAcXFfMzQ3NjQyMDY=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="直接显示请稍后了"></p>
+</div>
+</body>
+
+</html>
